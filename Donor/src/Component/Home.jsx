@@ -1,46 +1,37 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 
-import { UserContext } from "../context/UserContext";
 import {FaBox, FaUserCircle} from "react-icons/fa";
 import { Package2, Users2, CheckCircle2, Clock, Home as HomeIcon, Settings as SettingsIcon, Gift, Utensils } from "lucide-react";
 import { Card, CardContent } from "@mui/material";
 
-
 export const Home = () => {
-  const { user, token } = useContext(UserContext);
+  const location = useLocation();
   const [donations, setDonations] = useState([]);
   const [donationGoal, setDonationGoal] = useState(1000);
   const [donated, setDonated] = useState(0);
   const [totalDonors, setTotalDonors] = useState(0);
   const [recentDonations, setRecentDonations] = useState([]);
+  const [donorDetails, setDonorDetails] = useState({
+    name: localStorage.getItem('userName') || location.state?.name,
+    donorType: location.state?.donorType || "",
+    individualAddress: location.state?.individualAddress || ""
+  });
   const [achievements, setAchievements] = useState({
     totalRestaurants: 0,
     totalMealsServed: 0,
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/donor/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setDonationGoal(res.data.donationGoal || 1000);
-      } catch (error) {
-        console.error("Error fetching donor profile:", error);
-      }
-    };
-
     const fetchDonations = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/donation/my-donations", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get("http://localhost:5000/donations");
         setDonations(response.data);
-        const total = response.data.reduce((acc, donation) => acc + donation.availableQty, 0);
+        const total = response.data.reduce((acc, donation) => acc + parseInt(donation.availableQty), 0);
         setDonated(total);
+        setRecentDonations(response.data.slice(-5));
       } catch (error) {
         console.error("Error fetching donations:", error);
       }
@@ -48,41 +39,32 @@ export const Home = () => {
 
     const fetchTotalDonors = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/donor/count");
-        setTotalDonors(response.data.totalDonors);
+        const response = await axios.get("http://localhost:5000/donors");
+        setTotalDonors(response.data.length);
       } catch (error) {
         console.error("Error fetching total donors:", error);
-      }
-    };
-
-    const fetchRecentDonations = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/donation/recent-orders", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setRecentDonations(response.data);
-      } catch (error) {
-        console.error("Error fetching recent donations:", error.response?.data || error.message);
       }
     };
     
     const fetchAchievements = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/achievements");
-        setAchievements(response.data);
+        const donorsRes = await axios.get("http://localhost:5000/donors");
+        const donationsRes = await axios.get("http://localhost:5000/donations");
+        const restaurants = donorsRes.data.filter(d => d.donorType === "Restaurant").length;
+        const totalMeals = donationsRes.data.reduce((acc, d) => acc + parseInt(d.availableQty), 0);
+        setAchievements({
+          totalRestaurants: restaurants,
+          totalMealsServed: totalMeals
+        });
       } catch (error) {
         console.error("Error fetching achievements:", error);
       }
     };
 
-    if (token) {
-      fetchProfile();
-      fetchDonations();
-      fetchTotalDonors();
-      fetchRecentDonations();
-      fetchAchievements();
-    }
-  }, [token]);
+    fetchDonations();
+    fetchTotalDonors();
+    fetchAchievements();
+  }, []);
 
   const progress = (donated / donationGoal) * 100;
 
@@ -124,9 +106,12 @@ export const Home = () => {
             </Link>
           </motion.div>
         </nav>
-        <Link to="/settings" className="mt-auto pt-4 border-t flex items-center gap-2 hover:bg-gray-100 p-3 rounded-lg">
-          <FaUserCircle className="text-blue-600" size={18} />
-          <p className="text-sm text-gray-600">{user?.name || "User"}</p>
+        <Link to="/settings" className="mt-auto pt-4 border-t flex flex-col gap-1 hover:bg-gray-100 p-3 rounded-lg">
+          <div className="flex items-center gap-2">
+            <FaUserCircle className="text-blue-600" size={18} />
+            <p className="text-sm text-gray-900 font-medium">Welcome, {donorDetails.name}</p>
+          </div>
+          <p className="text-xs text-gray-500 ml-6">{donorDetails.donorType}</p>
         </Link>
       </motion.aside>
 
@@ -216,12 +201,9 @@ export const Home = () => {
                     </div>
                     <motion.div
                       whileHover={{ scale: 1.1 }}
-                      className={`text-sm font-medium px-3 py-1 rounded-full
-                        ${donation.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                          donation.status === 'Approved' ? 'bg-green-100 text-green-800' : 
-                          'bg-blue-100 text-blue-800'}`}
+                      className="text-sm font-medium px-3 py-1 rounded-full bg-blue-100 text-blue-800"
                     >
-                      {donation.status}
+                      Active
                     </motion.div>
                   </motion.div>
                 ))}

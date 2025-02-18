@@ -8,13 +8,7 @@ import Sidebar from "./pages/volunteerpages/components/SideBar";
 import Orders from "./pages/volunteerpages/Orders/orders";
 import MapPage from "./pages/volunteerpages/Map/mapPage";
 import AddPeople from "./pages/volunteerpages/People/AddPeople";
-import { useVolunteerStore } from "./store/useVolunteerStore";
 import VolunteerLayout from "./pages/volunteerpages/components/VolunteerLayout"; 
-
-const ProtectedRoute = ({ element }) => {
-  const { volunteer } = useVolunteerStore();
-  return volunteer ? element : <Navigate to="/login" replace />;
-};
 
 const App = () => {
   return (
@@ -31,10 +25,10 @@ const App = () => {
           element={
             <VolunteerLayout>
               <Routes>
-                <Route path="/" element={<ProtectedRoute element={<VolunteerHomepage />} />} />
-                <Route path="/volunteers/AddPeople" element={<ProtectedRoute element={<AddPeople />} />} />
-                <Route path="/volunteers/Orders" element={<ProtectedRoute element={<Orders />} />} />
-                <Route path="/volunteers/map" element={<ProtectedRoute element={<MapPage />} />} />
+                <Route path="/" element={<VolunteerHomepage />} />
+                <Route path="/volunteers/AddPeople" element={<AddPeople />} />
+                <Route path="/volunteers/Orders" element={<Orders />} />
+                <Route path="/volunteers/map" element={<MapPage />} />
                 {/* Catch-all route */}
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>

@@ -81,7 +81,7 @@ useEffect(() => {
   
   const fetchDonations = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:5000/donation/my-donations', {
+      const response = await axios.get('http://localhost:5000/donations', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDonations(response.data);
@@ -97,7 +97,7 @@ useEffect(() => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/donation/create', newDonation, {
+      await axios.post('http://localhost:5000/donations', newDonation, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setIsDialogOpen(false);
@@ -116,19 +116,32 @@ useEffect(() => {
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
-          setNewDonation((prev) => ({
-            ...prev,
-            currentLocation: {
-              lat: latitude,
-              long: longitude,
-            },
-          }));
+  
+          try {
+            const response = await axios.get(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
+            );
+            
+            if (response.data.results.length > 0) {
+              const address = response.data.results[0].formatted_address;
+  
+              setNewDonation((prev) => ({
+                ...prev,
+                address,
+                currentLocation: { lat: latitude, long: longitude },
+              }));
+            } else {
+              alert("Could not fetch address. Try again.");
+            }
+          } catch (error) {
+            console.error("Error fetching address:", error);
+          }
         },
         (error) => {
           console.error("Error getting location:", error);
-          alert("Could not fetch your location. Please allow location access in your browser.");
+          alert("Could not fetch your location. Please allow location access.");
         }
       );
     } else {
@@ -211,7 +224,7 @@ useEffect(() => {
                 <Card elevation={3}>
                   <CardHeader
                     avatar={<BiSolidBowlRice size={24} className="h-6 w-6 text-blue-600"/>}
-                    title={<Typography variant="h5"><b>Food #{donation._id.slice(-4)}</b></Typography>}
+                    title={<Typography variant="h5"><b>Food #{donation._id?.slice(-4) || 'N/A'}</b></Typography>}
                     action={
                       <div className="flex items-center gap-2">
                         <Chip

@@ -21,7 +21,29 @@
       "donationAmount": null
     }
   ],
-  "volunteers": [],
+  "volunteers": [
+    {
+      "id": "3c1e",
+      "email": "727723eucs192@skcet.ac.in",
+      "fullName": "Ratik",
+      "password": "1234567890",
+      "volunteerType": "individual",
+      "organizationName": "",
+      "contactPerson": "",
+      "dob": "2025-02-15",
+      "gender": "Male",
+      "contactNumber": "9789459829",
+      "aadhaarNumber": "34734268473239873",
+      "city": "Coimbatore",
+      "location": {
+        "latitude": "10.936994",
+        "longitude": "76.9553428",
+        "address": "WXP4+R8W, BK Pudur, Sugunapuram East, Kurichi, Coimbatore, Tamil Nadu 641008, India"
+      },
+      "aadhaarFile": "rW7wAAAABJRU5ErkJggg==",
+      "agreement": true
+    }
+  ],
   "receivers": [
     {
       "id": "4ea4",
@@ -31,6 +53,20 @@
       "contactNumber": "9789459829",
       "email": "nikhilnitin3@gmai.com",
       "password": "1234567890",
+      "organizationAddress": "19, Dhanalakshmi Nagar Main Road\n19o",
+      "city": "Coimbatore",
+      "pincode": "600095",
+      "numberOfOrphanages": "19",
+      "agreement": true
+    },
+    {
+      "id": "b037",
+      "orphanageName": "Messi",
+      "orphanageRegNumber": "8989898998",
+      "contactPerson": "Nikhil",
+      "contactNumber": "93803898983",
+      "email": "jegan.v.pillai@gmail.com",
+      "password": "00000",
       "organizationAddress": "19, Dhanalakshmi Nagar Main Road\n19o",
       "city": "Coimbatore",
       "pincode": "600095",
@@ -98,14 +134,52 @@
       "createdAt": "2025-02-17T08:49:34.903Z"
     }
   ],
-  "donations": [],
-  "prerequests": [
+  "donations": [
     {
-      "id": "3pk2",
-      "quantity": 50,
-      "status": "pending",
-      "createdAt": "2025-02-17T09:21:21.282Z"
+      "id": "1d5a",
+      "availableQty": "20",
+      "preparedTime": "11:11",
+      "address": "77, E Jones Rd, Suriyammapet, Saidapet, Chennai, Tamil Nadu 600015, India",
+      "currentLocation": {
+        "lat": 13.02528,
+        "lng": 80.2258944
+      }
     },
+    {
+      "id": "80ce",
+      "foodName": "Hello",
+      "availableQty": "10",
+      "preparedTime": "10:10",
+      "address": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
+      "currentLocation": {
+        "lat": 11.0168445,
+        "long": 76.9558321
+      }
+    },
+    {
+      "id": "1fb6",
+      "foodName": "Ratik",
+      "availableQty": "10",
+      "preparedTime": "11:11",
+      "address": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
+      "currentLocation": {
+        "lat": 11.0168445,
+        "long": 76.9558321
+      }
+    },
+    {
+      "id": "af7d",
+      "foodName": "Saran",
+      "availableQty": "20",
+      "preparedTime": "10:10",
+      "address": "WXP4+R8W, BK Pudur, Sugunapuram East, Kurichi, Coimbatore, Tamil Nadu 641008, India",
+      "currentLocation": {
+        "lat": 10.9369933,
+        "long": 76.9553483
+      }
+    }
+  ],
+  "prerequests": [
     {
       "id": "vcsu",
       "quantity": 78,
@@ -153,6 +227,50 @@
       "date": "2025-01-31",
       "time": "11:11",
       "eventImage": null
+    }
+  ],
+  "addpeople": [
+    {
+      "id": 1739875583308,
+      "name": "Nikhil",
+      "age": "10",
+      "gender": "male",
+      "locationDesc": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
+      "location": {
+        "lat": 11.0168445,
+        "lng": 76.9558321
+      },
+      "status": "Active",
+      "phone": "9789459829",
+      "area": "Coimbatore"
+    },
+    {
+      "id": 1739875612931,
+      "name": "Pragatheesh",
+      "age": "89",
+      "gender": "female",
+      "locationDesc": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
+      "location": {
+        "lat": 11.0168445,
+        "lng": 76.9558321
+      },
+      "status": "Active",
+      "phone": "988988989898989",
+      "area": "Coimbatore"
+    },
+    {
+      "id": 1739876637269,
+      "name": "Saran",
+      "age": "89",
+      "gender": "male",
+      "locationDesc": "2XHV+J88, 41, Avarampalayam, Rajagopal Layout, Krishnarayapuram, Illango Nagar, Coimbatore, Tamil Nadu 641004, India",
+      "location": {
+        "lat": 11.028992829766652,
+        "lng": 76.99326896195998
+      },
+      "status": "Active",
+      "phone": "097894 59829",
+      "area": "Coimbatore"
     }
   ]
 }

@@ -11,48 +11,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/Card";
 import { Badge } from "../components/badge";
 import GoogleMapComponent from "../GoogleMapComponent";
 import axios from "axios";
-import { axiosInstance } from "../../../lib/axios";
-import { useVolunteerStore } from "../../../store/useVolunteerStore";
-
-const teamMembers = [
-  {
-    id: 1,
-    name: "John Doe",
-    phone: "+1 234-567-8900",
-    area: "North District",
-    status: "Active",
-    deliveries: 156,
-  },
-  {
-    id: 2,
-    name: "Alice Smith",
-    phone: "+1 234-567-8901",
-    area: "South District",
-    status: "On Break",
-    deliveries: 142,
-  },
-  {
-    id: 3,
-    name: "Robert King",
-    phone: "+1 234-567-8902",
-    area: "East District",
-    status: "Active",
-    deliveries: 98,
-  },
-];
 
 export function AddPeople() {
-  const {addMember}=useVolunteerStore();
   const [open, setOpen] = useState(false);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     age: "",
     gender: "",
     locationDesc: "",
     location: { lat: null, lng: null },
+    status: "Active",
+    phone: "",
+    area: ""
   });
 
   useEffect(() => {
+    fetchTeamMembers();
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -71,18 +46,34 @@ export function AddPeople() {
     }
   }, []);
 
+  const fetchTeamMembers = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/addpeople');
+      setTeamMembers(response.data);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      await axios.post('http://localhost:5000/addpeople', {
+        ...formData,
+        id: Date.now(),
+        status: "Active"
+      });
       setFormData({
         name: "",
         age: "",
         gender: "",
         locationDesc: "",
         location: { lat: null, lng: null },
+        status: "Active",
+        phone: "",
+        area: ""
       });
-      await addMember(formData);
-      console.log("Member added successfully");
+      fetchTeamMembers();
       setOpen(false);
     } catch (error) {
       console.error("Error adding member:", error);
@@ -101,6 +92,9 @@ export function AddPeople() {
       gender: "",
       locationDesc: "",
       location: { lat: null, lng: null },
+      status: "Active",
+      phone: "",
+      area: ""
     });
   };
 
@@ -120,13 +114,9 @@ export function AddPeople() {
       location: { lat: location.lat, lng: location.lng },
     }));
   };
-  
 
   return (
     <div>
-      <Button variant="outlined" onClick={() => setOpen(true)}>
-        Add Homeless Person
-      </Button>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <form onSubmit={handleSubmit}>
         <DialogTitle>
@@ -137,20 +127,18 @@ export function AddPeople() {
         </DialogTitle>
         <DialogContent>
           <div className="grid gap-6">
-            {/* Name */}
             <div className="flex flex-col gap-2">
               <label>Name</label>
               <input
                 name="name"
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={handleInputChange}
                 className="input input-bordered w-full"
                 placeholder="Enter person's name"
               />
             </div>
 
-            {/* Age and Gender */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <label>Age</label>
@@ -158,7 +146,7 @@ export function AddPeople() {
                   name="age"
                   type="number"
                   value={formData.age}
-                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                  onChange={handleInputChange}
                   className="input input-bordered w-full"
                   placeholder="Enter age"
                 />
@@ -168,7 +156,7 @@ export function AddPeople() {
                 <select
                   name="gender"
                   value={formData.gender}
-                  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                  onChange={handleInputChange}
                   className="select select-bordered w-full"
                 >
                   <option value="">Select gender</option>
@@ -179,20 +167,42 @@ export function AddPeople() {
               </div>
             </div>
 
-            {/* Location Description */}
+            <div className="flex flex-col gap-2">
+              <label>Phone</label>
+              <input
+                name="phone"
+                type="text"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="input input-bordered w-full"
+                placeholder="Enter phone number"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label>Area</label>
+              <input
+                name="area"
+                type="text"
+                value={formData.area}
+                onChange={handleInputChange}
+                className="input input-bordered w-full"
+                placeholder="Enter area"
+              />
+            </div>
+
             <div className="flex flex-col gap-2">
               <label>Location Description</label>
               <textarea
                 name="locationDesc"
                 rows={2}
                 value={formData.locationDesc}
-                onChange={(e) => setFormData({ ...formData, locationDesc: e.target.value })}
+                onChange={handleInputChange}
                 className="textarea textarea-bordered w-full"
                 placeholder="E.g., Near Gandhi Park, Anna Salai"
               />
             </div>
 
-            {/* Map */}
             <div className="flex flex-col gap-2">
               <label>Location on Map</label>
               <div className="h-[200px] border border-gray-300 rounded-lg">
@@ -202,7 +212,6 @@ export function AddPeople() {
           </div>
         </DialogContent>
 
-        {/* Dialog Actions */}
         <DialogActions>
           <Button onClick={handleClose} variant="outlined">
             Cancel
@@ -214,7 +223,6 @@ export function AddPeople() {
       </form>
     </Dialog>
 
-      {/* Display Team Members */}
       <div className="space-y-8 px-6 py-8 bg-gray-50 min-h-screen">
         <div className="flex justify-between items-center">
           <h1 className="text-4xl font-extrabold text-gray-900">

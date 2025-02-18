@@ -1,33 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Package2, Gift, Utensils, Settings as SettingsIcon, Home as HomeIcon, Building2, Users, Phone, Mail } from 'lucide-react';
 import { FaBox, FaUserCircle } from 'react-icons/fa';
 import { UserContext } from '../context/UserContext';
-
-const organizations = [
-  {
-    id: 1,
-    name: "Happy Children's Home",
-    peopleCount: 45,
-    contact: "+91 9876543210",
-    email: "happy@children.org",
-  },
-  {
-    id: 2,
-    name: "Elder Care Center",
-    peopleCount: 80,
-    contact: "+91 9876543211",
-    email: "care@eldercare.org",
-  },
-  {
-    id: 3,
-    name: "Hope Foundation",
-    peopleCount: 120,
-    contact: "+91 9876543212",
-    email: "info@hopefoundation.org",
-  },
-];
+import axios from 'axios';
 
 const Sidebar = ({ user }) => {
   return (
@@ -86,7 +63,7 @@ const DonationDialog = ({ organization, onClose }) => {
   ];
 
   const handleSubmit = () => {
-    alert(`Donation scheduled for ${organization.name}
+    alert(`Donation scheduled for ${organization.orphanageName}
     Date: ${date}
     Meal Type: ${mealType}
     Reason: ${reason}`);
@@ -101,7 +78,7 @@ const DonationDialog = ({ organization, onClose }) => {
         className="bg-white p-6 rounded-lg w-96 shadow-xl"
       >
         <h2 className="text-2xl font-bold mb-4 text-gray-900">Schedule Donation</h2>
-        <p className="mb-4 text-gray-700">Organization: {organization.name}</p>
+        <p className="mb-4 text-gray-700">Organization: {organization.orphanageName}</p>
         
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1 text-gray-700">Reason for Donation</label>
@@ -166,6 +143,22 @@ const DonationDialog = ({ organization, onClose }) => {
 export const SpecialDonations = () => {
   const [selectedOrg, setSelectedOrg] = useState(null);
   const { user } = useContext(UserContext);
+  const [receivers, setReceivers] = useState([]);
+  const [requests, setRequests] = useState([]);
+
+  const fetchData = () => {
+    axios.get('http://localhost:5000/receivers')
+      .then(response => setReceivers(response.data));
+
+    axios.get('http://localhost:5000/requests')
+      .then(response => setRequests(response.data));
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -184,7 +177,7 @@ export const SpecialDonations = () => {
           transition={{ duration: 0.5 }}
           className="space-y-4"
         >
-          {organizations.map((org) => (
+          {receivers.map((org) => (
             <motion.div
               key={org.id}
               whileHover={{ scale: 1.02 }}
@@ -194,15 +187,15 @@ export const SpecialDonations = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Building2 className="text-blue-600" size={20} />
-                    <h2 className="text-xl font-bold text-gray-900">{org.name}</h2>
+                    <h2 className="text-xl font-bold text-gray-900">{org.orphanageName}</h2>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <Users size={16} />
-                    <p>People: {org.peopleCount}</p>
+                    <p>People: {org.numberOfOrphanages}</p>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <Phone size={16} />
-                    <p>Contact: {org.contact}</p>
+                    <p>Contact: {org.contactNumber}</p>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <Mail size={16} />

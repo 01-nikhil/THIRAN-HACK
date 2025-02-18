@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaChartBar, FaBox, FaMapMarkerAlt, FaUsers, FaBars, FaSignOutAlt } from "react-icons/fa";
-import { useVolunteerStore } from "../../../store/useVolunteerStore";
 
 export default function Sidebar() {
-  const {logout}=useVolunteerStore();
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -18,10 +16,8 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
-      await logout();
-      // setTimeout(() => {
-      //   // navigate("/login", { replace: true });
-      // }, 500);
+      // Add your logout logic here
+      console.log("Logging out...");
     } catch (error) {
       console.error("Logout failed:", error);
     }

@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import axios from "axios"
 import "leaflet/dist/leaflet.css"
 import { motion } from "framer-motion"
 import { Button } from "./components/button"
 import { Input } from "./components/input"
 import { Label } from "./components/label"
+import { useNavigate } from "react-router-dom";
 import { RadioGroup, RadioGroupItem } from "./components/radio-group"
 import {
   Select,
@@ -25,12 +27,12 @@ import {
 import { Checkbox } from "./components/checkbox"
 import { MapPin } from "lucide-react"
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"
-import { useVolunteerStore } from "../../store/useVolunteerStore"
 import VolunteerAnimation from "./components/VolunteerAnimation"
+import toast from "react-hot-toast"
 
 export default function VolunteerSignUp() {
+  const navigate = useNavigate();  
   const [volunteerType, setVolunteerType] = useState("individual")
-  const { signup } = useVolunteerStore()
   const [location, setLocation] = useState("")
   const [coordinates, setCoordinates] = useState({
     lat: 11.0168,
@@ -179,12 +181,12 @@ export default function VolunteerSignUp() {
     e.preventDefault()
     
     if (!formData.agreement) {
-      alert("Please agree to the terms and conditions")
+      toast.error("Please agree to the terms and conditions")
       return
     }
 
     if (!coordinates.lat || !coordinates.lng) {
-      alert("Please select a location on the map")
+      toast.error("Please select a location on the map")
       return
     }
 
@@ -194,57 +196,59 @@ export default function VolunteerSignUp() {
         location: {
           latitude: coordinates.lat.toString(),
           longitude: coordinates.lng.toString(),
-
           address: location || ''
         }
       }
 
       if (volunteerData.volunteerType === 'individual') {
         if (!volunteerData.fullName || !volunteerData.dob || !volunteerData.gender || !volunteerData.aadhaarNumber || !volunteerData.aadhaarFile) {
-          alert("Please fill all required fields for individual volunteer")
+          toast.error("Please fill all required fields for individual volunteer")
           return
         }
       } else if (volunteerData.volunteerType === 'organization') {
         if (!volunteerData.organizationName || !volunteerData.contactPerson) {
-          alert("Please fill all required fields for organization")
+          toast.error("Please fill all required fields for organization")
           return
         }
       }
 
       if (!volunteerData.email || !volunteerData.password || !volunteerData.contactNumber || !volunteerData.city) {
-        alert("Please fill all required fields")
+        toast.error("Please fill all required fields")
         return
       }
 
-      console.log('Form Data:', volunteerData)
-
-      await signup(volunteerData)
-      // setShowAnimation(true);
-      setFormData({
-        email: "",
-        fullName: "",
-        password: "",
-        volunteerType: "individual",
-        organizationName: "",
-        contactPerson: "",
-        dob: "",
-        gender: "",
-        contactNumber: "",
-        aadhaarNumber: "",
-        city: "",
-        location: {
-          latitude: "",
-          longitude: "",
-          address: ""
-        },
-        aadhaarFile: "",
-        agreement: false,
-      })
+      const response = await axios.post('http://localhost:5000/volunteers', volunteerData)
+      
+      if (response.status === 201) {
+        toast.success("Volunteer registration successful!")
+        navigate('/login')
+        
+        setFormData({
+          email: "",
+          fullName: "",
+          password: "",
+          volunteerType: "individual",
+          organizationName: "",
+          contactPerson: "",
+          dob: "",
+          gender: "",
+          contactNumber: "",
+          aadhaarNumber: "",
+          city: "",
+          location: {
+            latitude: "",
+            longitude: "",
+            address: ""
+          },
+          aadhaarFile: "",
+          agreement: false,
+        })
+      }
     } catch (error) {
       console.error("Error submitting form:", error)
-      alert(error.message || "Error submitting form. Please try again.")
+      toast.error(error.response?.data?.message || "Error submitting form. Please try again.")
     }
-  }   
+  }  
   const renderLocationSection = () => (
     <Card>
       <CardHeader>

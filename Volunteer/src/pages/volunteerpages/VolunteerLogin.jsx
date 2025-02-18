@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useVolunteerStore } from '../../store/useVolunteerStore';
 import { motion } from 'framer-motion';
 import { FiMail, FiLock, FiArrowLeft, FiUserPlus } from 'react-icons/fi';
+import axios from 'axios';
+import toast from "react-hot-toast"
 
 function VolunteerLogin() {
   const navigate = useNavigate();
-  const {login}=useVolunteerStore();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -14,23 +14,45 @@ function VolunteerLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempted with:', formData);
-  
-    await login(formData); // Wait for login to complete
-  
-    if (useVolunteerStore.getState().volunteer) {  // Check if login was successful
-      navigate('/');
+    try {
+      const response = await axios.get('http://localhost:5000/volunteers');
+      const volunteers = response.data;
+      
+      const volunteer = volunteers.find(v => 
+        v.email === formData.email && v.password === formData.password
+      );
+
+      if (volunteer) {
+        const { id, fullName, location: { latitude, longitude, address }, email, contactNumber, city } = volunteer;
+        toast.success('Login successful!');
+        navigate('/', { 
+          state: { 
+            id, 
+            fullName, 
+            location: {
+              latitude,
+              longitude,
+              address
+            }, 
+            email, 
+            contactNumber, 
+            city 
+          } 
+        });
+      } else {
+        toast.error('Invalid credentials. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('An error occurred during login. Please try again.');
     }
   };
-  
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-center relative overflow-hidden">
       <motion.div

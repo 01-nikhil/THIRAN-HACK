@@ -4,13 +4,23 @@ import { Package2, Users2, CheckCircle2, Clock, Calendar } from "lucide-react";
 import SideBar from "./components/SideBar";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Switch } from "@mui/material";
 import { useState } from "react";
-import { useVolunteerStore } from "../../store/useVolunteerStore";
 import { connectWebSocket, sendWebSocketMessage } from "../../socket";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function VolunteerHomePage() {
-  const { createEvent } = useVolunteerStore();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const volunteerData = location.state;
+
+  useEffect(() => {
+    if (!volunteerData) {
+      navigate('/login');
+      return;
+    }
+  }, [volunteerData, navigate]);
+
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(false);
 
@@ -47,44 +57,47 @@ export default function VolunteerHomePage() {
 
   // Handle file input change
   const handleFileChange = (e) => {
-    console.log("File selected:", e.target.files[0]);
     const file = e.target.files[0];
     setFormData((prev) => ({ ...prev, eventImage: file }));
-    console.log("File selected:", e.target.files[0]);
   };
 
   // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+    const eventData = {
+      eventName: formData.eventName,
+      location: formData.location,
+      date: formData.date,
+      time: formData.time,
+      eventImage: null,
+    };
 
-  const eventData = {
-    eventName: formData.eventName,
-    location: formData.location,
-    date: formData.date,
-    time: formData.time,
-    eventImage:null, // Store image name (JSON Server can't store files)
+    try {
+      const response = await axios.post("http://localhost:5000/specialevents", eventData);
+      
+      if (response.status === 201) {
+        toast.success("Event created successfully!");
+      }
+      
+      setOpen(false);
+    } catch (error) {
+      console.log("Error creating event:", error);
+    }
   };
 
-  try {
-    const response = await axios.post("http://localhost:5000/specialevents", eventData);
-    
-    if (response.status === 201) {
-      toast.success("Event created successfully!");
-    }
-    
-    setOpen(false);
-  } catch (error) {
-    console.log("Error creating event:", error);
+  if (!volunteerData) {
+    return null;
   }
-};
-
 
   return (
     <div className="flex">
       <div className="flex-1 p-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600">Welcome, {volunteerData.fullName}</p>
+          </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">Active</span>
@@ -218,39 +231,41 @@ const handleSubmit = async (e) => {
                 </Button>
               </DialogActions>
             </form>
-          </Dialog>        </div>        <div className="flex gap-6">
+          </Dialog>        
+        </div>        
+        <div className="flex gap-6">
           <div className="flex-1">
             <div className="grid gap-6 grid-cols-4 mb-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-gray-500">Active Orders</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-500">Volunteer ID</CardTitle>
                   <Package2 className="w-4 h-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">12</div>
-                  <p className="text-xs text-gray-500">+2 from yesterday</p>
+                  <div className="text-2xl font-bold">{volunteerData.id}</div>
+                  <p className="text-xs text-gray-500">{volunteerData.email}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-gray-500">Team Members</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-500">Location</CardTitle>
                   <Users2 className="w-4 h-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">8</div>
-                  <p className="text-xs text-gray-500">Active volunteers</p>
+                  <div className="text-2xl font-bold">{volunteerData.city}</div>
+                  <p className="text-xs text-gray-500">{volunteerData.location.address}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-gray-500">Completed Today</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-500">Contact</CardTitle>
                   <CheckCircle2 className="w-4 h-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">24</div>
-                  <p className="text-xs text-gray-500">+8 from yesterday</p>
+                  <div className="text-2xl font-bold">{volunteerData.contactNumber}</div>
+                  <p className="text-xs text-gray-500">Emergency Contact</p>
                 </CardContent>
               </Card>
 
