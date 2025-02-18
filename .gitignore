@@ -1,0 +1,22 @@
+# Java/Spring Boot
+target/
+*.jar
+*.war
+*.iml
+*.class
+*.log
+*.db
+*.sqlite
+/venv
+/.idea/
+.DS_Store
+
+# Node.js (React)
+node_modules/
+build/
+.env
+*.log
+
+# IntelliJ / VS Code settings
+.vscode/
+.idea/
