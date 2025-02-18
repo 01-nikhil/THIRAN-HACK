@@ -20,3 +20,6 @@ build/
 # IntelliJ / VS Code settings
 .vscode/
 .idea/
+
+token.json
+credentials.json
