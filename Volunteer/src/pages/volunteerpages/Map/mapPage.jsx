@@ -14,13 +14,22 @@ const defaultCenter = {
   lng: 76.9558
 };
 
-const redPinIcon = {
+const activeIcon = {
   url: "/gps.png",
   scaledSize: {
     width: 48,
     height: 52
   }
 };
+
+const inactiveIcon = {
+  url: "/placeholder.png",
+  scaledSize: {
+    width: 48,
+    height: 52
+  }
+};
+
 const libraries = ["places"];
 
 export default function MapPage() {
@@ -69,7 +78,7 @@ export default function MapPage() {
                     lng: person?.longitude || defaultCenter.lng 
                   }}
                   title={`${person?.name || 'Unknown'}: ${person?.locationDesc || 'No details'}`}
-                  icon={redPinIcon}
+                  icon={person?.status === 'active' ? activeIcon : inactiveIcon}
                   onClick={() => setSelectedPerson(person)}
                 />
               ))}

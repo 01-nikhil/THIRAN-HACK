@@ -55,7 +55,7 @@ export function AddPeople() {
     try {
       await axios.post('http://localhost:5000/addpeople', {
         ...formData,
-        id: Date.now(),
+        id: Date.now().toString(),
         status: "Active",
         foodDelivered: false
       });
@@ -107,10 +107,21 @@ export function AddPeople() {
 
   const toggleFoodDelivery = async (memberId, currentStatus) => {
     try {
-      await axios.patch(`http://localhost:5000/addpeople/${memberId}`, {
-        foodDelivered: !currentStatus
-      });
-      fetchTeamMembers();
+      const updatedData = {
+        foodDelivered: !currentStatus,
+        status: !currentStatus ? "Active" : "Inactive"
+      };
+      
+      const response = await axios.patch(`http://localhost:5000/addpeople/${memberId}`, updatedData);
+      if (response.status === 200) {
+        const updatedMembers = teamMembers.map(member => {
+          if (member.id === memberId) {
+            return { ...member, ...updatedData };
+          }
+          return member;
+        });
+        setTeamMembers(updatedMembers);
+      }
     } catch (error) {
       console.error("Error updating food delivery status:", error);
     }
