@@ -8,8 +8,6 @@ import ReceiverHomepage from './pages/receiverpages/ReceiverHomepage';
 import RequestHistory from './pages/receiverpages/Requests/SpecialEvents.jsx';
 import ReceiverSignup from './pages/receiverpages/ReceiverSignup.jsx';
 
-// Sidebar
-import ReceiverSidebar from './components/ReceiverSidebar.jsx';
 import NewRequest from './components/NewRequest.jsx';  // ✅ FIXED: Ensure correct import (TSX to JSX)
 import HelpSupport from './components/HelpSupport.jsx';
 import PreRequest from './components/PreRequest.jsx';
@@ -20,11 +18,7 @@ const App = () => {
 
   return (
     <Router>  {/* ✅ FIXED: Use BrowserRouter */}
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <ReceiverSidebar activeTab={activeTab} onTabChange={setActiveTab} />
         {/* Main Content */}
-        <div className="flex-1 p-6 bg-green-100">
           <Routes>
             <Route path="/" element={<ReceiverHomepage />} />
             <Route path="/receivers" element={<ReceiverHomepage />} />
@@ -36,10 +30,7 @@ const App = () => {
             <Route path="/receivers/dashboard" element={<ReceiverHomepage />} />
             <Route path="/receivers/pre-request" element={<PreRequest />} />
           </Routes>
-
           <Toaster />
-        </div>
-      </div>
     </Router>
   );
 };

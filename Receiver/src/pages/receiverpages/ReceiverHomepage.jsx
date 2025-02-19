@@ -1,185 +1,138 @@
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, Users, Clock, CheckCircle, Calendar } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Package2, Users2, CheckCircle2, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import ReceiverSidebar from '../../components/ReceiverSidebar';
+import { UserContext } from '../../UserContext';
 
 const ReceiverHomepage = () => {
+    const { userId } = useContext(UserContext);
     const navigate = useNavigate();
-    const loc = useLocation();
+
+    const [receiverDetails, setReceiverDetails] = useState(null);
     const [dashboardStats, setDashboardStats] = useState({
         totalRequests: 0,
         pendingRequests: 0,
         completedRequests: 0,
-        peakRequestTime: '00:00 AM'
+        peakRequestTime: '00:00 AM',
     });
     const [recentRequests, setRecentRequests] = useState([]);
+    const [pendingRequests, setPendingRequests] = useState([]);
 
     useEffect(() => {
-        const userName = localStorage.getItem('userName');
-        const userLocation = localStorage.getItem('location');
-        const receiverId = localStorage.getItem('receiverId');
-
-        if (!userName || !userLocation || !receiverId) {
+        if (!userId) {
             toast.error('Please login first');
             navigate('/receivers/login');
-            return; // Important: Exit the useEffect if not logged in
+            return;
         }
 
-        // Fetch dashboard data
-        const fetchDashboardData = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/requests');
-                const allRequests = response.data;
+                const receiverResponse = await axios.get(`http://localhost:5000/receivers/${userId}`);
+                setReceiverDetails(receiverResponse.data);
 
-                // Filter requests for the logged-in orphanage
-                const orphanageName = localStorage.getItem('userName');
-                const receiverRequests = allRequests.filter(req => req.orphanageName === orphanageName);
+                const requestsResponse = await axios.get('http://localhost:5000/requests');
+                const allRequests = requestsResponse.data.filter(req => req.userId === userId);
 
-                // Sort requests by date for recent activity
-                const sortedRequests = [...receiverRequests].sort((a, b) =>
-                    new Date(b.createdAt) - new Date(a.createdAt)
-                );
-                setRecentRequests(sortedRequests.slice(0, 5));
-
-                // Calculate statistics
-                const totalRequests = receiverRequests.length;
-                const pendingRequests = receiverRequests.filter(req => req.status === 'pending').length;
-                const completedRequests = receiverRequests.filter(req => req.status === 'completed').length;
-                const peakRequestTime = calculatePeakTime(receiverRequests);
+                const totalRequests = allRequests.length;
+                const pendingRequests = allRequests.filter(req => req.status === 'pending');
+                const completedRequests = allRequests.filter(req => req.status === 'completed');
 
                 setDashboardStats({
                     totalRequests,
-                    pendingRequests,
-                    completedRequests,
-                    peakRequestTime
+                    pendingRequests: pendingRequests.length,
+                    completedRequests: completedRequests.length,
+                    peakRequestTime: calculatePeakTime(allRequests),
                 });
-
-
+                setRecentRequests(allRequests.slice(0, 5));
+                setPendingRequests(pendingRequests);
             } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-                toast.error('Failed to load dashboard data');
+                console.error('Error fetching data:', error);
+                toast.error('Failed to load data');
             }
         };
 
-        fetchDashboardData();
-    }, [navigate]);  // Include navigate in the dependency array
+        fetchData();
+    }, [userId, navigate]);
 
     const calculatePeakTime = (requests) => {
         if (requests.length === 0) return '00:00 AM';
-
-        // Extract times and convert them to Date objects
         const times = requests.map(req => new Date(req.createdAt).getTime());
-
-        // Find the latest time (maximum timestamp)
         const latestTime = Math.max(...times);
-
-        // Convert the latest time back to a Date object
         const peakTime = new Date(latestTime);
-
-        // Format the time to 12-hour format
         return peakTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     };
 
-    const cards = [
-        {
-            title: 'Total Requests',
-            value: dashboardStats.totalRequests,
-            icon: TrendingUp,
-            color: 'bg-blue-500',
-        },
-        {
-            title: 'Pending Requests',
-            value: dashboardStats.pendingRequests,
-            icon: Clock,
-            color: 'bg-yellow-500',
-        },
-        {
-            title: 'Completed Requests',
-            value: dashboardStats.completedRequests,
-            icon: CheckCircle,
-            color: 'bg-green-500',
-        },
-        {
-            title: 'Peak Request Time',
-            value: dashboardStats.peakRequestTime,
-            icon: Users,
-            color: 'bg-purple-500',
-        },
-    ];
-
     return (
-        <div className="p-6 space-y-6 flex-1">
-            <ToastContainer />
-            <div className="mb-8 text-center animate-fade-in">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-transparent bg-clip-text animate-pulse">
-                    Welcome, {loc.state?.name || localStorage.getItem('userName')}!
-                </h1>
-                <p className="text-gray-600 mt-2">Location: {loc.state?.location || localStorage.getItem('location')}</p>
+        <div className="flex h-screen">
+            <div className="w-64 flex-shrink-0">
+                <ReceiverSidebar />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {cards.map((card) => (
-                    <div
-                        key={card.title}
-                        className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-gray-500">{card.title}</p>
-                                <p className="text-2xl font-bold mt-1">{card.value}</p>
-                            </div>
-                            <div className={`${card.color} p-3 rounded-lg`}>
-                                <card.icon className="w-6 h-6 text-white" />
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50"
+            >
+                <ToastContainer />
+                {receiverDetails ? (
+                    <motion.div initial={{ y: -20 }} animate={{ y: 0 }} className="mb-8 text-center">
+                        <h1 className="text-4xl font-bold text-gray-900">
+                            Welcome, {receiverDetails.contactPerson}!
+                        </h1>
+                        <p className="text-gray-600 mt-2">
+                            Orphanage: {receiverDetails.orphanageName}
+                        </p>
+                    </motion.div>
+                ) : (
+                    <p className="text-center text-gray-500">Loading receiver details...</p>
+                )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-                    <div className="space-y-4">
-                        {recentRequests.map((request, i) => (
-                            <div key={i} className="p-4 rounded-lg bg-gray-50">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
-                                        <Calendar className="h-5 w-5 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <div className="font-medium">New Request Created</div>
-                                        <div className="text-sm text-gray-500">{new Date(request.createdAt).toLocaleDateString()}</div>
-                                        <div className="text-xs text-blue-600 mt-1">Request - {request.quantity} Servings</div>
-                                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[
+                        { title: 'Total Requests', value: dashboardStats.totalRequests, icon: Package2, color: 'bg-blue-500' },
+                        { title: 'Pending Requests', value: dashboardStats.pendingRequests, icon: Clock, color: 'bg-yellow-500' },
+                        { title: 'Completed Requests', value: dashboardStats.completedRequests, icon: CheckCircle2, color: 'bg-green-500' },
+                        { title: 'Peak Request Time', value: dashboardStats.peakRequestTime, icon: Users2, color: 'bg-purple-500' }
+                    ].map((card) => (
+                        <motion.div key={card.title} whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 300 }}
+                            className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-gray-500">{card.title}</p>
+                                    <p className="text-2xl font-bold mt-1">{card.value}</p>
+                                </div>
+                                <div className={`${card.color} p-3 rounded-lg`}>
+                                    <card.icon className="w-6 h-6 text-white" />
                                 </div>
                             </div>
-                        ))}
+                        </motion.div>
+                    ))}
+                </div>
+
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Recent Requests</h2>
+                    <div className="bg-white rounded-lg shadow-md p-4">
+                        {recentRequests.length > 0 ? (
+                            <ul>
+                                {recentRequests.map((req) => (
+                                    <li key={req.id} className="mb-2">
+                                        <p><strong>ID:</strong> {req.id}</p>
+                                        <p><strong>Status:</strong> {req.status}</p>
+                                        <p><strong>Created At:</strong> {new Date(req.createdAt).toLocaleString()}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-500">No recent requests.</p>
+                        )}
                     </div>
                 </div>
-                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h3 className="text-lg font-semibold mb-4">Recent Analytics</h3>
-                    <div className="space-y-4">
-                        {recentRequests.map((request, i) => (
-                            <div key={i} className="p-4 rounded-lg bg-gray-50">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
-                                        <Calendar className="h-5 w-5 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <div className="font-medium">Pending Request</div>
-                                        <div className="text-sm text-gray-500">OTP: {request.otp}</div>
-                                        <div className="text-xs text-blue-600 mt-1">Status: {request.status}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            </motion.div>
         </div>
     );
 };
-
 
 export default ReceiverHomepage;
