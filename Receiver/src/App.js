@@ -14,12 +14,14 @@ import NewRequest from './components/NewRequest.jsx';  // ✅ FIXED: Ensure corr
 import HelpSupport from './components/HelpSupport.jsx';
 import PreRequest from './components/PreRequest.jsx';
 import SpecialEvents from './pages/receiverpages/Requests/SpecialEvents.jsx';
+import Chatbot from './components/chatbot.jsx';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
     <Router>  {/* ✅ FIXED: Use BrowserRouter */}
+    <Chatbot/>
       <div className="flex min-h-screen">
         {/* Sidebar */}
         <ReceiverSidebar activeTab={activeTab} onTabChange={setActiveTab} />

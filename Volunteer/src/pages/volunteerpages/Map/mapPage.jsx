@@ -15,9 +15,12 @@ const defaultCenter = {
 };
 
 const redPinIcon = {
-  url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+  url: "/gps.png",
+  scaledSize: {
+    width: 48,
+    height: 52
+  }
 };
-
 const libraries = ["places"];
 
 export default function MapPage() {
@@ -28,7 +31,12 @@ export default function MapPage() {
     const fetchHomelessPeople = async () => {
       try {
         const response = await axios.get('http://localhost:5000/addpeople');
-        setHomelessPeople(response.data || []);
+        const peopleWithCoordinates = response.data.map(person => ({
+          ...person,
+          latitude: person.location.lat,
+          longitude: person.location.lng
+        }));
+        setHomelessPeople(peopleWithCoordinates || []);
       } catch (error) {
         console.error('Error fetching homeless people:', error);
         setHomelessPeople([]);
@@ -57,10 +65,10 @@ export default function MapPage() {
                 <Marker
                   key={person?.id || `homeless-${person?.latitude}-${person?.longitude}`}
                   position={{ 
-                    lat: parseFloat(person?.latitude) || defaultCenter.lat, 
-                    lng: parseFloat(person?.longitude) || defaultCenter.lng 
+                    lat: person?.latitude || defaultCenter.lat, 
+                    lng: person?.longitude || defaultCenter.lng 
                   }}
-                  title={`${person?.name || 'Unknown'}: ${person?.details || 'No details'}`}
+                  title={`${person?.name || 'Unknown'}: ${person?.locationDesc || 'No details'}`}
                   icon={redPinIcon}
                   onClick={() => setSelectedPerson(person)}
                 />
@@ -68,8 +76,8 @@ export default function MapPage() {
               {selectedPerson && (
                 <InfoWindow
                   position={{
-                    lat: parseFloat(selectedPerson.latitude) || defaultCenter.lat,
-                    lng: parseFloat(selectedPerson.longitude) || defaultCenter.lng
+                    lat: selectedPerson.latitude || defaultCenter.lat,
+                    lng: selectedPerson.longitude || defaultCenter.lng
                   }}
                   onCloseClick={() => setSelectedPerson(null)}
                 >
@@ -78,11 +86,8 @@ export default function MapPage() {
                     <div className="space-y-1">
                       <p><span className="font-semibold">Age:</span> {selectedPerson.age || 'Not specified'}</p>
                       <p><span className="font-semibold">Gender:</span> {selectedPerson.gender || 'Not specified'}</p>
-                      <p><span className="font-semibold">Location:</span> {selectedPerson.location || 'Not specified'}</p>
-                      <p><span className="font-semibold">Details:</span> {selectedPerson.details || 'No details'}</p>
-                      <p><span className="font-semibold">Health Status:</span> {selectedPerson.healthStatus || 'Not specified'}</p>
-                      <p><span className="font-semibold">Contact:</span> {selectedPerson.contact || 'Not specified'}</p>
-                      <p><span className="font-semibold">Last Updated:</span> {selectedPerson.lastUpdated || 'Not specified'}</p>
+                      <p><span className="font-semibold">Location:</span> {selectedPerson.locationDesc || 'Not specified'}</p>
+                      <p><span className="font-semibold">Food Delivered:</span> {selectedPerson.foodDelivered ? 'Yes' : 'No'}</p>
                     </div>
                   </div>
                 </InfoWindow>

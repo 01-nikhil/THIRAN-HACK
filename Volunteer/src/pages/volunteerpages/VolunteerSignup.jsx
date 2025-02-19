@@ -221,7 +221,7 @@ export default function VolunteerSignUp() {
       
       if (response.status === 201) {
         toast.success("Volunteer registration successful!")
-        navigate('/login')
+        navigate('/volunteers/login')
         
         setFormData({
           email: "",
