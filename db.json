@@ -128,27 +128,42 @@
   ],
   "addpeople": [
     {
-      "id": 1739979034195,
-      "name": "Ratik",
-      "age": "6",
+      "id": 1739980540821,
+      "name": "Saran",
+      "age": "65",
       "gender": "male",
-      "locationDesc": "43, Gandhipudur, Lakshmipuram, Coimbatore, Tamil Nadu 641004, India",
+      "locationDesc": "Raj Bhavanam, 75/63, Peranaidu Layout, Ram Nagar, Coimbatore, Tamil Nadu 641009, India",
       "location": {
-        "lat": 11.015635413106734,
-        "lng": 77.02051161933923
+        "lat": 11.015794566434765,
+        "lng": 76.96504789026312
       },
+      "status": "Active",
       "foodDelivered": false
     },
     {
-      "id": 1739979368452,
-      "name": "Kutta",
-      "age": "69",
-      "gender": "other",
-      "locationDesc": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
+      "id": 1739980786214,
+      "name": "Dummy",
+      "age": "54",
+      "gender": "female",
+      "locationDesc": "XXX9+PJX, Opp. Collector Office, Gopalapuram, Singanallur, Coimbatore, Tamil Nadu 641014, India",
       "location": {
-        "lat": 11.0034944,
-        "lng": 76.9753088
+        "lat": 10.999413184107741,
+        "lng": 76.96907329402165
       },
+      "status": "Active",
+      "foodDelivered": false
+    },
+    {
+      "id": 1739980925731,
+      "name": "Nikhil",
+      "age": "2323",
+      "gender": "male",
+      "locationDesc": "41/17, 41/17, Kuniyamuthur Rd, Machampalayam, Coimbatore, Kurichi, Tamil Nadu 641008, India",
+      "location": {
+        "lat": 10.9559844,
+        "lng": 76.9659593
+      },
+      "status": "Active",
       "foodDelivered": false
     }
   ],

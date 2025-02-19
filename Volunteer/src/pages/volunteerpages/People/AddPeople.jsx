@@ -19,7 +19,7 @@ export function AddPeople() {
     gender: "",
     locationDesc: "",
     location: { lat: null, lng: null },
-
+    status: "Active",
     foodDelivered: false
   });
 
