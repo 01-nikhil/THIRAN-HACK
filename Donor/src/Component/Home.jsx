@@ -1,23 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
-
-import {FaBox, FaUserCircle} from "react-icons/fa";
+import { FaBox, FaUserCircle } from "react-icons/fa";
 import { Package2, Users2, CheckCircle2, Clock, Home as HomeIcon, Settings as SettingsIcon, Gift, Utensils } from "lucide-react";
 import { Card, CardContent } from "@mui/material";
+import { UserContext } from "./useContext";
+
+
+
 
 export const Home = () => {
+  const {donorId, user}=useContext(UserContext)
   const location = useLocation();
+  
   const [donations, setDonations] = useState([]);
   const [donationGoal, setDonationGoal] = useState(1000);
   const [donated, setDonated] = useState(0);
   const [totalDonors, setTotalDonors] = useState(0);
   const [recentDonations, setRecentDonations] = useState([]);
   const [donorDetails, setDonorDetails] = useState({
-    name: localStorage.getItem('userName') || location.state?.name,
+    name: localStorage.getItem("userName") || location.state?.name,
     donorType: location.state?.donorType || "",
-    individualAddress: location.state?.individualAddress || ""
+    individualAddress: location.state?.individualAddress || "",
   });
   const [achievements, setAchievements] = useState({
     totalRestaurants: 0,
@@ -25,6 +30,8 @@ export const Home = () => {
   });
 
   useEffect(() => {
+    console.log(donorId);
+    
     const fetchDonations = async () => {
       try {
         const response = await axios.get("http://localhost:5000/donations");
@@ -64,6 +71,7 @@ export const Home = () => {
     fetchDonations();
     fetchTotalDonors();
     fetchAchievements();
+    
   }, []);
 
   const progress = (donated / donationGoal) * 100;
@@ -152,7 +160,7 @@ export const Home = () => {
                   </div>
                   <div className="text-3xl font-bold">{stat.value}</div>
                   <p className="text-sm text-gray-500">{stat.subtitle}</p>
-                  {stat.title === "Goal Progress" && (
+                  {stat.title&& (
                     <motion.div 
                       className="w-full bg-gray-200 rounded-full h-2.5 mt-3"
                       initial={{ width: 0 }}

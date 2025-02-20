@@ -1,25 +1,45 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/Card";
-import { Package2, Users2, CheckCircle2, Clock, Calendar } from "lucide-react";
+import { Package2, Users2, CheckCircle2, Clock, Calendar, UserCircle2, MapPin, Phone, Clock1 } from "lucide-react";
 import SideBar from "./components/SideBar";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Switch } from "@mui/material";
-import { useState } from "react";
 import { connectWebSocket, sendWebSocketMessage } from "../../socket";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { UserContext } from "./UserContext";
 
-export default function VolunteerHomePage() {
+const VolunteerHomepage = () => {
+  const{volunteerId}=useContext(UserContext);
+  console.log("Volunteer ID from context:", volunteerId);
   const location = useLocation();
   const navigate = useNavigate();
-  const volunteerData = location.state;
+  const [volunteer, setVolunteer] = useState(null);
+  const [specialEvents, setSpecialEvents] = useState([]);
 
   useEffect(() => {
-    if (!volunteerData) {
-      navigate('/login');
-      return;
+    const fetchVolunteerData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/volunteers");
+        const volunteerData = response.data.find(v => v.id === volunteerId);
+        setVolunteer(volunteerData);
+      } catch (error) {
+        console.error("Error fetching volunteer data:", error);
+      }
+    };
+    fetchVolunteerData();
+    fetchSpecialEvents(); // Call fetchSpecialEvents when component mounts
+  }, [volunteerId]);
+
+  const fetchSpecialEvents = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/specialevents");
+      setSpecialEvents(response.data);
+      console.log("Special events fetched:", response.data); // Add logging to verify data
+    } catch (error) {
+      console.error("Error fetching special events:", error);
     }
-  }, [volunteerData, navigate]);
+  };
 
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(false);
@@ -33,35 +53,24 @@ export default function VolunteerHomePage() {
     eventImage: null,
   });
 
-  useEffect(() => {
-    connectWebSocket();
-  }, []);
-
-  // Open dialog
   const handleClickOpen = () => setOpen(true);
-  // Close dialog
   const handleClose = () => setOpen(false);
 
-  // Handle active switch change
   const handleActiveClick = () => {
     setActive(!active);
     const volunteerData = { type: "volunteer", message: "Volunteer status changed!", status: !active };
-    sendWebSocketMessage(volunteerData);
   };
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file input change
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData((prev) => ({ ...prev, eventImage: file }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -78,6 +87,7 @@ export default function VolunteerHomePage() {
       
       if (response.status === 201) {
         toast.success("Event created successfully!");
+        fetchSpecialEvents();
       }
       
       setOpen(false);
@@ -86,7 +96,7 @@ export default function VolunteerHomePage() {
     }
   };
 
-  if (!volunteerData) {
+  if (!volunteer) {
     return null;
   }
 
@@ -96,7 +106,7 @@ export default function VolunteerHomePage() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">Welcome, {volunteerData.fullName}</p>
+            <p className="text-gray-600">Welcome, {volunteer.fullName}</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -235,52 +245,55 @@ export default function VolunteerHomePage() {
         </div>        
         <div className="flex gap-6">
           <div className="flex-1">
-            <div className="grid gap-6 grid-cols-4 mb-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-gray-500">Volunteer ID</CardTitle>
-                  <Package2 className="w-4 h-4 text-blue-600" />
+            <div className="grid gap-4 grid-cols-4 mb-4">
+              <Card className="p-3">
+                <CardHeader className="flex flex-row items-center justify-between p-2 space-y-0">
+                  <div className="flex items-center gap-2">
+                    <UserCircle2 className="w-5 h-5 text-blue-600" />
+                    <CardTitle className="text-xs font-medium text-gray-500">Volunteer ID</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{volunteerData.id}</div>
-                  <p className="text-xs text-gray-500">{volunteerData.email}</p>
+                <CardContent className="p-2 flex justify-center items-center">
+                  <div className="text-xl font-bold">{volunteer.id}</div>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-gray-500">Location</CardTitle>
-                  <Users2 className="w-4 h-4 text-green-600" />
+              <Card className="p-3">
+                <CardHeader className="flex flex-row items-center justify-between p-2 space-y-0">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-green-600" />
+                    <CardTitle className="text-xs font-medium text-gray-500">Location</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{volunteerData.city}</div>
-                  <p className="text-xs text-gray-500">{volunteerData.location.address}</p>
+                <CardContent className="p-2 flex justify-center items-center">
+                  <div className="text-xl font-bold">{volunteer.city}</div>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-gray-500">Contact</CardTitle>
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+              <Card className="p-3">
+                <CardHeader className="flex flex-row items-center justify-between p-2 space-y-0">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-5 h-5 text-green-600" />
+                    <CardTitle className="text-xs font-medium text-gray-500">Contact</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{volunteerData.contactNumber}</div>
-                  <p className="text-xs text-gray-500">Emergency Contact</p>
+                <CardContent className="p-2 flex justify-center items-center">
+                  <div className="text-xl font-bold">{volunteer.contactNumber}</div>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-medium text-gray-500">Average Time</CardTitle>
-                  <Clock className="w-4 h-4 text-blue-600" />
+              <Card className="p-3">
+                <CardHeader className="flex flex-row items-center justify-between p-2 space-y-0">
+                  <div className="flex items-center gap-2">
+                    <Clock1 className="w-5 h-5 text-blue-600" />
+                    <CardTitle className="text-xs font-medium text-gray-500">Average Time</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">32m</div>
-                  <p className="text-xs text-gray-500">Per delivery</p>
+                <CardContent className="p-2 flex justify-center items-center">
+                  <div className="text-xl font-bold">32m</div>
                 </CardContent>
               </Card>
-            </div>
-
+            </div>            
             <Card>
               <CardHeader>
                 <CardTitle>Recent Orders</CardTitle>
@@ -306,37 +319,34 @@ export default function VolunteerHomePage() {
           </div>
 
           <div className="w-96">
-            <Card>
+            <Card className="h-[527px] overflow-y-auto">
               <CardHeader>
                 <CardTitle>Upcoming Events</CardTitle>
                 <CardDescription>Special community events</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[
-                    { title: "Food Drive", date: "Tomorrow, 10 AM", type: "Community" },
-                    { title: "Volunteer Meet", date: "Friday, 2 PM", type: "Team" },
-                    { title: "Charity Dinner", date: "Next Week", type: "Fundraiser" }
-                  ].map((event, i) => (
-                    <div key={i} className="p-4 rounded-lg bg-gray-50">
+                  {specialEvents.map((event, i) => (
+                    <div key={event.id} className="p-4 rounded-lg bg-gray-50">
                       <div className="flex items-center gap-4">
                         <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
                           <Calendar className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                          <div className="font-medium">{event.title}</div>
-                          <div className="text-sm text-gray-500">{event.date}</div>
-                          <div className="text-xs text-blue-600 mt-1">{event.type}</div>
+                          <div className="font-medium">{event.eventName}</div>
+                          <div className="text-sm text-gray-500">{event.date} at {event.time}</div>
+                          <div className="text-xs text-blue-600 mt-1">{event.location}</div>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </Card>          
           </div>
         </div>
       </div>
     </div>
   );
 }
+export default VolunteerHomepage;

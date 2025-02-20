@@ -13,6 +13,7 @@ const PreRequest = () => {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [preRequests, setPreRequests] = useState([]);
+  const [orphanageName, setOrphanageName] = useState('');
   const { userId } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -23,7 +24,17 @@ const PreRequest = () => {
       return;
     }
     fetchPreRequests();
+    fetchOrphanageName();
   }, [userId, navigate]);
+
+  const fetchOrphanageName = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/receivers/${userId}`);
+      setOrphanageName(response.data.name);
+    } catch (error) {
+      console.error('Error fetching orphanage name:', error);
+    }
+  };
 
   const fetchPreRequests = async () => {
     try {
@@ -44,6 +55,7 @@ const PreRequest = () => {
         date,
         time,
         userId,
+        orphanageName,
         status: 'pending',
         createdAt: new Date().toISOString(),
       };

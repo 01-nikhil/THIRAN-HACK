@@ -11,7 +11,7 @@
       "organizationName": "",
       "restaurantName": "",
       "fssaiNumber": "",
-      "individualAddress": "19, Dhanalakshmi Nagar Main Road",
+      "individualAddress": "19, Dhanalakshmi Nagar Main Road,Coimbatore",
       "orgResAddress": "",
       "city": "Coimbatore",
       "pincode": "600095",
@@ -21,26 +21,62 @@
       "donationAmount": null
     }
   ],
+  "donations": [
+    {
+      "id": "a57f",
+      "foodName": "30food",
+      "availableQty": "30",
+      "preparedTime": "11:11",
+      "address": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
+      "status": "Pending",
+      "currentLocation": {
+        "lat": 11.0034944,
+        "long": 76.9753088
+      },
+      "donorId": "jqnf"
+    }
+  ],
   "volunteers": [
     {
-      "id": "3c1e",
-      "email": "727723eucs192@skcet.ac.in",
-      "fullName": "Ratik",
-      "password": "1234567890",
+      "id": "7182",
+      "email": "sofiavusha@gmail.com",
+      "fullName": "Friend",
+      "password": "12345",
       "volunteerType": "individual",
       "organizationName": "",
       "contactPerson": "",
-      "dob": "2025-02-15",
+      "dob": "2025-02-08",
       "gender": "Male",
       "contactNumber": "9789459829",
-      "aadhaarNumber": "34734268473239873",
+      "aadhaarNumber": "3222222222222",
       "city": "Coimbatore",
       "location": {
-        "latitude": "10.936994",
-        "longitude": "76.9553428",
-        "address": "WXP4+R8W, BK Pudur, Sugunapuram East, Kurichi, Coimbatore, Tamil Nadu 641008, India"
+        "latitude": "11.0034944",
+        "longitude": "76.9753088",
+        "address": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India"
       },
-      "aadhaarFile": "rW7wAAAABJRU5ErkJggg==",
+      "aadhaarFile": "amB8wBYfiVC06jgAAAABJRU5ErkJggg==",
+      "agreement": true
+    },
+    {
+      "id": "10f2",
+      "email": "727723eucs192@skcet.ac.in",
+      "fullName": "Sam",
+      "password": "12345",
+      "volunteerType": "individual",
+      "organizationName": "",
+      "contactPerson": "",
+      "dob": "2025-02-07",
+      "gender": "Male",
+      "contactNumber": "9789459829",
+      "aadhaarNumber": "1111111111111111",
+      "city": "Coimbatore",
+      "location": {
+        "latitude": "10.955985",
+        "longitude": "76.9659586",
+        "address": "41/17, 41/17, Kuniyamuthur Rd, Machampalayam, Coimbatore, Kurichi, Tamil Nadu 641008, India"
+      },
+      "aadhaarFile": "data:image/png;base64,iVBORw0KG==",
       "agreement": true
     }
   ],
@@ -60,19 +96,6 @@
       "agreement": true
     },
     {
-<<<<<<< HEAD
-      "id": "b037",
-      "orphanageName": "Messi",
-      "orphanageRegNumber": "8989898998",
-      "contactPerson": "Nikhil",
-      "contactNumber": "93803898983",
-      "email": "jegan.v.pillai@gmail.com",
-      "password": "00000",
-      "organizationAddress": "19, Dhanalakshmi Nagar Main Road\n19o",
-      "city": "Coimbatore",
-      "pincode": "600095",
-      "numberOfOrphanages": "19",
-=======
       "id": "367d",
       "orphanageName": "whatever",
       "orphanageRegNumber": "qerfrqw24",
@@ -98,223 +121,163 @@
       "city": "Chennai",
       "pincode": "600101",
       "numberOfOrphanages": "23",
->>>>>>> 9b52507 (receiver updated with frontend & backend)
       "agreement": true
     }
   ],
   "requests": [
     {
-      "id": "yq13",
-      "quantity": 12,
-      "orphanageName": "whatever",
-      "organizationAddress": "221/4b Rohini flats,\nAnna Nagar West Extn,",
-      "city": "Chennai",
-      "pincode": "600101",
-      "contactPerson": "Saran Srinivaas V",
-      "contactNumber": "07538803489",
-      "otp": "8427",
-      "donor": null,
-      "status": "pending",
-      "createdAt": "2025-02-19T06:45:27.960Z"
-    },
-    {
-      "id": "6v86",
-      "userId": "367d",
-      "quantity": 12,
-      "orphanageName": "whatever",
-      "organizationAddress": "221/4b Rohini flats,\nAnna Nagar West Extn,",
-      "city": "Chennai",
-      "pincode": "600101",
-      "contactPerson": "Saran Srinivaas V",
-      "contactNumber": "07538803489",
-      "otp": "4790",
-      "donor": null,
-      "status": "pending",
-      "createdAt": "2025-02-19T07:32:14.702Z"
-    },
-    {
-      "id": "pbc0",
-      "userId": "7ec2",
-      "quantity": 23,
-      "orphanageName": "whatever",
-      "organizationAddress": "221/4b Rohini flats,\nAnna Nagar West Extn,",
-      "city": "Chennai",
-      "pincode": "600101",
-      "contactPerson": "Saran Srinivaas V",
-      "contactNumber": "07538803489",
-      "otp": "4999",
-      "donor": null,
-      "status": "pending",
-      "createdAt": "2025-02-19T07:35:00.772Z"
-    },
-    {
-      "id": "mr0a",
-      "userId": "7ec2",
-      "quantity": 23,
-      "orphanageName": "whatever",
-      "organizationAddress": "221/4b Rohini flats,\nAnna Nagar West Extn,",
-      "city": "Chennai",
-      "pincode": "600101",
-      "contactPerson": "Saran Srinivaas V",
-      "contactNumber": "07538803489",
-      "otp": "3783",
-      "donor": null,
-      "status": "pending",
-      "createdAt": "2025-02-19T09:09:28.885Z"
-    }
-  ],
-  "donations": [
-    {
-<<<<<<< HEAD
-      "id": "1d5a",
-      "availableQty": "20",
-      "preparedTime": "11:11",
-      "address": "77, E Jones Rd, Suriyammapet, Saidapet, Chennai, Tamil Nadu 600015, India",
-      "currentLocation": {
-        "lat": 13.02528,
-        "lng": 80.2258944
-      }
-    },
-    {
-      "id": "80ce",
-      "foodName": "Hello",
-      "availableQty": "10",
-      "preparedTime": "10:10",
-      "address": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
-      "currentLocation": {
-        "lat": 11.0168445,
-        "long": 76.9558321
-      }
-    },
-    {
-      "id": "1fb6",
-      "foodName": "Ratik",
-      "availableQty": "10",
-      "preparedTime": "11:11",
-      "address": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
-      "currentLocation": {
-        "lat": 11.0168445,
-        "long": 76.9558321
-      }
-    },
-    {
-      "id": "af7d",
-      "foodName": "Saran",
-      "availableQty": "20",
-      "preparedTime": "10:10",
-      "address": "WXP4+R8W, BK Pudur, Sugunapuram East, Kurichi, Coimbatore, Tamil Nadu 641008, India",
-      "currentLocation": {
-        "lat": 10.9369933,
-        "long": 76.9553483
-      }
-    }
-  ],
-  "prerequests": [
-    {
-      "id": "vcsu",
-      "quantity": 78,
+      "id": "uelv",
+      "userId": "4ea4",
+      "quantity": 27,
       "orphanageName": "Rooban",
       "organizationAddress": "19, Dhanalakshmi Nagar Main Road\n19o",
       "city": "Coimbatore",
       "pincode": "600095",
       "contactPerson": "rvelayuthan",
       "contactNumber": "9789459829",
-=======
-      "id": "6f7f",
-      "quantity": 12,
-      "userId": "367d",
+      "otp": "8924",
+      "donor": null,
       "status": "pending",
-      "createdAt": "2025-02-19T08:19:49.757Z"
-    },
-    {
-      "id": "z0ck",
-      "quantity": 23,
-      "date": "0323-02-23",
-      "time": "23:23",
-      "userId": "367d",
->>>>>>> 9b52507 (receiver updated with frontend & backend)
-      "status": "pending",
-      "createdAt": "2025-02-19T08:25:41.702Z"
+      "createdAt": "2025-02-20T01:11:10.546Z"
     }
   ],
   "pastrequests": [],
   "events": [],
   "specialevents": [
     {
-      "id": "24db",
+      "id": "5472",
       "eventName": "Event name",
-      "location": "Location",
-      "date": "2025-02-11",
+      "location": "London",
+      "date": "2025-02-07",
       "time": "11:11",
       "eventImage": null
     },
     {
-      "id": "eab7",
-      "eventName": "Saran",
-      "location": "HHAHAHA",
-      "date": "2025-02-11",
-      "time": "10:01",
-      "eventImage": null
-    },
-    {
-      "id": "5939",
-      "eventName": "ratik",
-      "location": "HHAHAHA",
-      "date": "2025-02-11",
-      "time": "10:01",
-      "eventImage": null
-    },
-    {
-      "id": "f285",
-      "eventName": "San",
-      "location": "clg",
-      "date": "2025-01-31",
-      "time": "11:11",
+      "id": "4dd2",
+      "eventName": "MOMO",
+      "location": "Lcoation",
+      "date": "2025-02-09",
+      "time": "10:10",
       "eventImage": null
     }
   ],
   "addpeople": [
     {
-      "id": 1739875583308,
-      "name": "Nikhil",
-      "age": "10",
+      "id": "1739979034195",
+      "name": "Ratik",
+      "age": "6",
       "gender": "male",
-      "locationDesc": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
+      "locationDesc": "43, Gandhipudur, Lakshmipuram, Coimbatore, Tamil Nadu 641004, India",
       "location": {
-        "lat": 11.0168445,
-        "lng": 76.9558321
+        "lat": 11.015635413106734,
+        "lng": 77.02051161933923
       },
-      "status": "Active",
-      "phone": "9789459829",
-      "area": "Coimbatore"
+      "foodDelivered": false
     },
     {
-      "id": 1739875612931,
-      "name": "Pragatheesh",
-      "age": "89",
-      "gender": "female",
-      "locationDesc": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
+      "id": "1739979368452",
+      "name": "Kutta",
+      "age": "69",
+      "gender": "other",
+      "locationDesc": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
       "location": {
-        "lat": 11.0168445,
-        "lng": 76.9558321
+        "lat": 11.0034944,
+        "lng": 76.9753088
       },
-      "status": "Active",
-      "phone": "988988989898989",
-      "area": "Coimbatore"
+      "foodDelivered": false
+    }
+  ],
+  "orders": [
+    {
+      "id": "1fb6-6v86",
+      "donationId": "1fb6",
+      "requestId": "6v86",
+      "volunteerId": "7182",
+      "status": "Accepted",
+      "pickup": "4/337, Venkitapuram, Seth Narang Das Layout, Kallathukadu, Pappireddipatti, Coimbatore, Tamil Nadu 636905, India",
+      "destination": "221/4b Rohini flats,\nAnna Nagar West Extn,",
+      "quantity": 7,
+      "items": "Biriyani",
+      "eta": "5 hours 38 mins",
+      "distance": "304 km"
     },
     {
-      "id": 1739876637269,
-      "name": "Saran",
-      "age": "89",
-      "gender": "male",
-      "locationDesc": "2XHV+J88, 41, Avarampalayam, Rajagopal Layout, Krishnarayapuram, Illango Nagar, Coimbatore, Tamil Nadu 641004, India",
-      "location": {
-        "lat": 11.028992829766652,
-        "lng": 76.99326896195998
-      },
-      "status": "Active",
-      "phone": "097894 59829",
-      "area": "Coimbatore"
+      "id": "af7d-6v86",
+      "donationId": "af7d",
+      "requestId": "6v86",
+      "volunteerId": "10f2",
+      "status": "Accepted",
+      "pickup": "WXP4+R8W, BK Pudur, Sugunapuram East, Kurichi, Coimbatore, Tamil Nadu 641008, India",
+      "destination": "221/4b Rohini flats,\nAnna Nagar West Extn,",
+      "quantity": 6,
+      "items": "Rice",
+      "eta": "8 hours 56 mins",
+      "distance": "515 km"
+    },
+    {
+      "id": "723c-maia",
+      "donationId": "723c",
+      "requestId": "maia",
+      "volunteerId": "7182",
+      "status": "Accepted",
+      "pickup": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
+      "destination": "19, Dhanalakshmi Nagar Main Road\n19o",
+      "quantity": 30,
+      "items": "Chicken",
+      "eta": "8 hours 25 mins",
+      "distance": "496 km"
+    },
+    {
+      "id": "fa92-ducd",
+      "donationId": "fa92",
+      "requestId": "ducd",
+      "volunteerId": "10f2",
+      "status": "Accepted",
+      "pickup": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
+      "destination": "19, Dhanalakshmi Nagar Main Road\n19o",
+      "quantity": 28,
+      "items": "jfcgnsdrkzvdss",
+      "eta": "8 hours 25 mins",
+      "distance": "496 km"
+    },
+    {
+      "id": "8ddf-ducd",
+      "donationId": "8ddf",
+      "requestId": "ducd",
+      "volunteerId": "10f2",
+      "status": "Accepted",
+      "pickup": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
+      "destination": "19, Dhanalakshmi Nagar Main Road\n19o",
+      "quantity": 27,
+      "items": "Food",
+      "eta": "8 hours 25 mins",
+      "distance": "496 km"
+    },
+    {
+      "id": "63aa-brua",
+      "donationId": "63aa",
+      "requestId": "brua",
+      "volunteerId": "10f2",
+      "status": "Accepted",
+      "pickup": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
+      "destination": "19, Dhanalakshmi Nagar Main Road\n19o",
+      "quantity": 25,
+      "items": "Food",
+      "eta": "8 hours 25 mins",
+      "distance": "496 km"
+    },
+    {
+      "id": "8095-brua",
+      "donationId": "8095",
+      "requestId": "brua",
+      "volunteerId": "10f2",
+      "status": "Accepted",
+      "pickup": "128B, 178/128B, Race Course Rd, Gopalapuram, Coimbatore, Tamil Nadu 641018, India",
+      "destination": "19, Dhanalakshmi Nagar Main Road\n19o",
+      "quantity": 20,
+      "items": "foodneeded",
+      "eta": "8 hours 25 mins",
+      "distance": "496 km"
     }
   ]
 }

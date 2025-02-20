@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Package2, Gift, Utensils, Settings as SettingsIcon, Home as HomeIcon, Building2, Users, Phone, Mail } from 'lucide-react';
 import { FaBox, FaUserCircle } from 'react-icons/fa';
-import { UserContext } from '../context/UserContext';
 import axios from 'axios';
+import { UserContext } from './useContext';
 
 const Sidebar = ({ user }) => {
   return (
@@ -50,7 +50,7 @@ const Sidebar = ({ user }) => {
       </motion.aside>
   );
 };
-const DonationDialog = ({ organization, onClose }) => {
+const DonationDialog = ({ organization, onClose, donorId }) => {
   const [date, setDate] = useState('');
   const [reason, setReason] = useState('');
   const [mealType, setMealType] = useState('');
@@ -62,12 +62,48 @@ const DonationDialog = ({ organization, onClose }) => {
     { value: 'snacks', label: 'Snacks' }
   ];
 
-  const handleSubmit = () => {
-    alert(`Donation scheduled for ${organization.orphanageName}
-    Date: ${date}
-    Meal Type: ${mealType}
-    Reason: ${reason}`);
-    onClose();
+  const handleSubmit = async () => {
+    try {
+      const specialDonation = {
+        id: Date.now().toString(),
+        donorId,
+        organizationId: organization.id,
+        orphanageName: organization.orphanageName,
+        date,
+        mealType,
+        reason
+      };
+
+      const response = await axios.get('http://localhost:5000/specialdonations');
+      const existingDonations = response.data || [];
+      
+      await axios.post('http://localhost:5000/specialdonations', specialDonation);
+
+      alert('Special donation scheduled successfully!');
+      onClose();
+    } catch (error) {
+      console.error('Error scheduling donation:', error);
+      if (error.response?.status === 404) {
+        try {
+          await axios.post('http://localhost:5000/specialdonations', {
+            id: Date.now().toString(),
+            donorId,
+            organizationId: organization.id,
+            orphanageName: organization.orphanageName,
+            date,
+            mealType,
+            reason
+          });
+          alert('Special donation scheduled successfully!');
+          onClose();
+        } catch (err) {
+          console.error('Error creating initial donations:', err);
+          alert('Failed to schedule donation');
+        }
+      } else {
+        alert('Failed to schedule donation');
+      }
+    }
   };
 
   return (
@@ -142,23 +178,29 @@ const DonationDialog = ({ organization, onClose }) => {
 
 export const SpecialDonations = () => {
   const [selectedOrg, setSelectedOrg] = useState(null);
-  const { user } = useContext(UserContext);
+  const { user, donorId } = useContext(UserContext);
   const [receivers, setReceivers] = useState([]);
-  const [requests, setRequests] = useState([]);
+  const [specialDonations, setSpecialDonations] = useState([]);
 
-  const fetchData = () => {
-    axios.get('http://localhost:5000/receivers')
-      .then(response => setReceivers(response.data));
+  const fetchData = async () => {
+    try {
+      const receiversResponse = await axios.get('http://localhost:5000/receivers');
+      setReceivers(receiversResponse.data);
 
-    axios.get('http://localhost:5000/requests')
-      .then(response => setRequests(response.data));
+      const donationsResponse = await axios.get('http://localhost:5000/specialdonations');
+      const allDonations = donationsResponse.data || [];
+      const userDonations = allDonations.filter(donation => donation.donorId === donorId);
+      setSpecialDonations(userDonations);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [donorId]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -171,12 +213,36 @@ export const SpecialDonations = () => {
         >
           Special Donations
         </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mb-8"
+        >
+          <div className="space-y-4">
+            {specialDonations.map((donation) => (
+              <motion.div
+                key={donation.id}
+                className="bg-white rounded-lg shadow-md p-4"
+              >
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold">{donation.orphanageName}</h3>
+                  <p className="text-gray-600">Date: {new Date(donation.date).toLocaleDateString()}</p>
+                  <p className="text-gray-600">Meal Type: {donation.mealType}</p>
+                  <p className="text-gray-600">Reason: {donation.reason}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="space-y-4"
         >
+          <h2 className="text-2xl font-bold mb-4 text-gray-900">Available Organizations</h2>
           {receivers.map((org) => (
             <motion.div
               key={org.id}
@@ -218,6 +284,7 @@ export const SpecialDonations = () => {
           <DonationDialog
             organization={selectedOrg}
             onClose={() => setSelectedOrg(null)}
+            donorId={donorId}
           />
         )}
       </div>

@@ -1,44 +1,40 @@
+// App.js
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import VolunteerLogin from "./pages/volunteerpages/VolunteerLogin";
 import VolunteerSignUp from "./pages/volunteerpages/VolunteerSignup";
-import VolunteerHomepage from "./pages/volunteerpages/VolunteerHomepage";
 import Sidebar from "./pages/volunteerpages/components/SideBar";
-import Orders from "./pages/volunteerpages/Orders/orders";
 import MapPage from "./pages/volunteerpages/Map/mapPage";
 import AddPeople from "./pages/volunteerpages/People/AddPeople";
-import VolunteerLayout from "./pages/volunteerpages/components/VolunteerLayout"; 
+import { OrdersPage } from "./pages/volunteerpages/Orders/Orders";
+import VolunteerHomePage from "./pages/volunteerpages/VolunteerHomepage";
 
 const App = () => {
-  return (
-    <>
-      
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<VolunteerLogin />} />
-        <Route path="/volunteers/signup" element={<VolunteerSignUp />} />
+    return (
+        <>
+            <div className="flex">
+                <Sidebar />
+                <div className="flex-1 p-4 ml-64">
+                    <Routes>
+                        {/* Public Routes */}
+                        <Route path="/volunteers/login" element={<VolunteerLogin />} />
+                        <Route path="/volunteers/signup" element={<VolunteerSignUp />} />
 
-        {/* Protected Routes inside Layout */}
-        <Route
-          path="/*"
-          element={
-            <VolunteerLayout>
-              <Routes>
-                <Route path="/" element={<VolunteerHomepage />} />
-                <Route path="/volunteers/AddPeople" element={<AddPeople />} />
-                <Route path="/volunteers/Orders" element={<Orders />} />
-                <Route path="/volunteers/map" element={<MapPage />} />
-                {/* Catch-all route */}
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </VolunteerLayout>
-          }
-        />
-      </Routes>
-      <Toaster />
-    </>
-  );
+                        {/* Protected Routes */}
+                        <Route path="/" element={<VolunteerHomePage/>} />
+                        <Route path="/volunteers/orders" element={<OrdersPage />} />
+                        <Route path="/volunteers/map" element={<MapPage />} />
+                        <Route path="/volunteers/AddPeople" element={<AddPeople />} />
+
+                        {/* Catch-all Route (must be last) */}
+                        {/* <Route path="*" element={<VolunteerHomePage />} /> */}
+                    </Routes>
+                </div>
+            </div>
+            <Toaster />
+        </>
+    );
 };
 
 export default App;

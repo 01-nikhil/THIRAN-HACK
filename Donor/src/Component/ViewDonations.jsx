@@ -6,7 +6,6 @@ import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextFiel
 import { BiSolidBowlRice } from "react-icons/bi";
 // import { Edit } from "@mui/icons-material";
 import {FaBox, FaUserCircle} from "react-icons/fa";
-import { UserContext } from '../context/UserContext';
 import { Package2, Settings as SettingsIcon, Gift, Utensils, Home as HomeIcon, } from 'lucide-react';
 import { 
   Card, 
@@ -17,9 +16,12 @@ import {
   Grid} from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { AccessTime, LocationOn, Map } from '@mui/icons-material';
+import { UserContext } from './useContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const ViewDonations = () => {
-  const { token, user } = useContext(UserContext);
+  const { user, donorId } = useContext(UserContext);
   const [donations, setDonations] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newDonation, setNewDonation] = useState({
@@ -27,14 +29,16 @@ export const ViewDonations = () => {
     availableQty: '',
     preparedTime: '',
     address: '',
-    currentLocation: { lat: '', long: '' }
+    status: 'Pending',
+    currentLocation: { lat: '', long: '' },
+    donorId: user?.id
   });
   const [editDonation, setEditDonation] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const handleUpdateDonation = async () => {
     try {
-      await axios.put(`http://localhost:5000/donation/update/${editDonation._id}`, editDonation, {
-        headers: { Authorization: `Bearer ${token}` }
+      await axios.put(`http://localhost:5000/donation/update/${editDonation.id}`, editDonation, {
+        // headers: { Authorization: `Bearer ${token}` }
       });
       setEditDonation(null);
       fetchDonations();
@@ -65,7 +69,7 @@ useEffect(() => {
   const handleDeleteDonation = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/donation/delete/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        // headers: { Authorization: `Bearer ${token}` }
       });
       setEditDonation(null);
       fetchDonations();
@@ -82,13 +86,14 @@ useEffect(() => {
   const fetchDonations = useCallback(async () => {
     try {
       const response = await axios.get('http://localhost:5000/donations', {
-        headers: { Authorization: `Bearer ${token}` }
+        // headers: { Authorization: `Bearer ${token}` }
       });
-      setDonations(response.data);
+      const filteredDonations = response.data.filter(donation => donation.donorId === donorId);
+      setDonations(filteredDonations);
     } catch (error) {
       console.error('Error fetching donations:', error);
     }
-  }, [token]);
+  }, [donorId]);
 
   useEffect(() => {
     fetchDonations();
@@ -97,8 +102,8 @@ useEffect(() => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/donations', newDonation, {
-        headers: { Authorization: `Bearer ${token}` }
+      await axios.post('http://localhost:5000/donations', {...newDonation, donorId:donorId}, {
+        // headers: { Authorization: `Bearer ${token}` }
       });
       setIsDialogOpen(false);
       fetchDonations();
@@ -107,14 +112,28 @@ useEffect(() => {
         availableQty: '',
         preparedTime: '',
         address: '',
-        currentLocation: { lat: '', long: '' }
+        status: 'Pending',
+        currentLocation: { lat: '', long: '' },
+        donorId: user?._id
       });
+      toast.success('Donation created successfully!');
     } catch (error) {
       console.error('Error creating donation:', error);
+      toast.error('Error creating donation');
     }
-  };
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
+};
+
+// Add useEffect for interval
+useEffect(() => {
+    const interval = setInterval(() => {
+        fetchDonations();
+    }, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+}, []);
+
+  const getCurrentLocation = () => {    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
@@ -148,7 +167,6 @@ useEffect(() => {
       alert("Geolocation is not supported by your browser.");
     }
   };
-  
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
@@ -246,8 +264,7 @@ useEffect(() => {
                       </div>
                     }
                   />
-                  <CardContent>
-                    <Grid container spacing={2}>
+                  <CardContent>                    <Grid container spacing={2}>
                       <Grid item xs={12}>
                         <Typography color="textSecondary" variant="subtitle2">Food Name</Typography>
                         <Typography variant="body1">{donation.foodName}</Typography>

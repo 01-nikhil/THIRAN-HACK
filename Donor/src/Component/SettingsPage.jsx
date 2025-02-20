@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
-import { UserContext } from "../context/UserContext";
 import { useNavigate, Link } from "react-router-dom";
 import { Package2, Home as HomeIcon, Settings as SettingsIcon, Gift, Utensils } from "lucide-react";
 import { motion } from "framer-motion";
 import { FaBox,FaUserCircle } from "react-icons/fa";
+import { UserContext } from "./useContext";
 
 const Sidebar = ({ user }) => {
   return (

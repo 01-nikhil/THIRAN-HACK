@@ -2,11 +2,12 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "./useContext";
+
 
 function DonorLogin() {
+  const { setUser, setDonorId } = useContext(UserContext);
   const navigate = useNavigate();
-  const { setUser, setToken } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -14,62 +15,62 @@ function DonorLogin() {
   });
 
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // Added loading state
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     try {
-      const response = await axios.get('http://localhost:5000/donors');
-      
+      const response = await axios.get("http://localhost:5000/donors");
+  
       if (!response || !response.data) {
-        throw new Error('No donors data found.');
+        throw new Error("No donors data found.");
       }
   
       const donors = response.data;
       const donor = donors.find(d => d.email === formData.email && d.password === formData.password);
   
       if (donor) {
-        // Storing donor details in localStorage
-        localStorage.setItem('userName', donor.name);
-        localStorage.setItem('location', donor.city);
-        localStorage.setItem('donorId', donor.id);
+        // Store donor ID in localStorage
+        localStorage.setItem("userName", donor.name);
+        localStorage.setItem("location", donor.city);
+        localStorage.setItem("donorId", donor.id.toString());
   
-        toast.success('Login successful!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        // Update context values
+        setUser(donor);
+        setDonorId(donor.id);
+        console.log(donor.id) // Ensure donor.id is correctly set
   
-        // Navigate to DonationHomepage with donor's name, donorType, and individualAddress
+        console.log("Donor ID set in context:", donor.id); // Debugging
+  
+        toast.success("Login successful!", { position: "top-right", autoClose: 3000 });
+  
         setTimeout(() => {
-          navigate('/', {
+          navigate("/", {
             state: {
               name: donor.name,
               donorType: donor.donorType,
-              individualAddress: donor.individualAddress
-            }
+              individualAddress: donor.individualAddress,
+            },
           });
         }, 1000);
       } else {
-        toast.error('Invalid email or password');
+        toast.error("Invalid email or password");
       }
     } catch (error) {
-      console.error('Login failed:', error);
-      toast.error('Login failed: ' + (error.response?.data?.message || error.message || 'An error occurred'));
+      console.error("Login failed:", error);
+      toast.error("Login failed: " + (error.response?.data?.message || error.message || "An error occurred"));
     }
   };
   
-  
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
   
   return (
     <div className="w-full h-screen bg-cover bg-center flex justify-center items-center">
